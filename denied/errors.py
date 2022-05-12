@@ -1,0 +1,29 @@
+from .permission import Permission
+
+
+class UndefinedPermission(Exception):
+    """Error raised when an Ability asks for a permission that is not
+    set in the policy.
+    """
+
+    def __init__(self, permission: Permission) -> None:
+        """
+        Args:
+            permission (Permission): a permission
+        """
+        super().__init__(f"Permission {permission.name} was not set in this policy")
+        self.permission = permission
+
+
+class UnauthorizedError(Exception):
+    """Error raised by an Ability when the policy did not allow access
+    for the permission.
+    """
+
+    def __init__(self, permission: Permission) -> None:
+        """
+        Args:
+            permission (Permission): a permission
+        """
+        super().__init__(f"Access denied for permission {permission.name}")
+        self.permission = permission

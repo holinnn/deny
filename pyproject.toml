@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "denied"
+version = "0.1.0"
+description = ""
+authors = ["Aurélien <aurelien.amilin@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.7,<4.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+black = "^22.3.0"
+isort = "^5.10.1"
+pytest-cov = "^3.0.0"
+ipdb = "^0.13.9"
+mypy = "^0.950"
+pytest-sugar = "^0.9.4"
+flake8 = "^4.0.1"
+pre-commit = "^2.19.0"
+pyproject-flake8 = "^0.0.1-alpha.4"
+
+[tool.pytest.ini_options]
+addopts = "-s --cov=denied --no-cov-on-fail --cov-report=term:skip-covered --cov-report=html"
+testpaths = [
+    "tests",
+]
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
