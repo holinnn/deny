@@ -1,4 +1,3 @@
-from functools import partial
 from typing import Any, Callable, Dict, Optional, Tuple
 
 from .errors import UndefinedPermission
@@ -41,17 +40,17 @@ class PolicyMetaclass(type):
             bases (Tuple[type, ...]): base classes
             attrs (Dict[str, Any]): class attributes
         """
-        access_methods: Dict[Permission, AccessMethod] = {}
-        for val in attrs.values():
+        access_methods: Dict[Permission, str] = {}
+        for name, value in attrs.items():
             permission: Optional[Permission] = getattr(
-                val, "_authorized_permission", None
+                value, "_authorized_permission", None
             )
             if not permission:
                 continue
 
             if permission in access_methods:
                 raise PermissionAlreadyDefined(permission)
-            access_methods[permission] = val
+            access_methods[permission] = name
 
         attrs["_access_methods"] = access_methods
         return super().__new__(cls, name, bases, attrs)
@@ -75,7 +74,7 @@ def authorize(permission: Permission) -> Callable[[AccessMethod], AccessMethod]:
 
 
 class Policy(metaclass=PolicyMetaclass):
-    _access_methods: Dict[Permission, AccessMethod]
+    _access_methods: Dict[Permission, str]
 
     def get_access_method(self, permission: Permission) -> AccessMethod:
         """Returns the AccessMethod that was registered for the permission
@@ -89,6 +88,6 @@ class Policy(metaclass=PolicyMetaclass):
             AccessMethod: access method registered for permission
         """
         try:
-            return partial(self._access_methods[permission], self)
+            return getattr(self, self._access_methods[permission])
         except KeyError:
             raise UndefinedPermission(permission)
