@@ -42,6 +42,7 @@ class ErrorHandler:
 class UserPolicy(Policy):
     @policy_authorize(ProjectPermissions.edit)
     def can_edit_project(self, id: int, *args: Any, **kwargs: Any) -> bool:
+        del id, args, kwargs
         return True
 
 

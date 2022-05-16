@@ -26,10 +26,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.venv
-          key: venv-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-1
       - name: Install dependencies
         if: steps.load-cache.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: poetry install --no-interaction --no-root --extras "falcon"
       - name: black
         run: poetry run black --check .
       - name: isort
@@ -38,3 +38,11 @@ jobs:
         run: poetry run mypy .
       - name: flake8
         run: poetry run flake8 .
+      - name: pytest
+        run: poetry run pytest --cov-report=xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2
+        if: matrix.python-version == 3.10
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: true
