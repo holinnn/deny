@@ -7,6 +7,7 @@ authors = ["Aurélien <aurelien.amilin@gmail.com>"]
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
 falcon = { version = ">3.0.0", optional = true }
+sanic = { version = ">22.0.0", optional = true }
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -19,22 +20,29 @@ pytest-sugar = "^0.9.4"
 flake8 = "^4.0.1"
 pre-commit = "^2.19.0"
 pytest-mock = "^3.7.0"
+pytest-asyncio = "^0.18.3"
+unasync = "^0.5.0"
+sanic-testing = "^22.3.0"
 
 [tool.poetry.extras]
 falcon = ["falcon"]
+sanic = ["sanic"]
 
 [tool.pytest.ini_options]
 addopts = "-s --cov=denied --no-cov-on-fail --cov-report=term:skip-covered --cov-report=html"
 testpaths = [
     "tests",
 ]
+asyncio_mode = "auto"
 
 [tool.isort]
 profile = "black"
 
 [[tool.mypy.overrides]]
 module = [
-    "falcon.*"
+    "falcon.*",
+    "sanic.*",
+    "unasync"
 ]
 ignore_missing_imports = true
 

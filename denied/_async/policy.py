@@ -1,24 +1,8 @@
 from typing import Any, Callable, Dict, Optional, Tuple
 
-from .errors import UndefinedPermission
-from .permission import Permission
-
-
-class PermissionAlreadyDefined(Exception):
-    """Error raised while using the @authorize() decorator with the same Permission
-    twice in the same Policy object.
-    """
-
-    def __init__(self, permission: Permission) -> None:
-        """
-        Args:
-            permission (Permission): a permission
-        """
-        super().__init__(f"Permission {permission.name} already defined")
-        self.permission = permission
-
-
-AccessMethod = Callable[..., bool]
+from denied.errors import PermissionAlreadyDefined, UndefinedPermission
+from denied.permission import Permission
+from denied.utils import AccessMethod
 
 
 class PolicyMetaclass(type):

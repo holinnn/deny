@@ -1,42 +1,45 @@
-import json
-from typing import Any, Dict, Optional
+from typing import Any, Awaitable, Callable, Optional
 from unittest.mock import ANY
 
 import pytest
-from falcon import Request, Response, testing
-from falcon.asgi import App
 from pytest_mock import MockerFixture
+from sanic import Sanic
+from sanic.handlers import ErrorHandler as SanicErrorHandler
+from sanic.request import Request
+from sanic.response import HTTPResponse, json
 
 from denied import Ability, Action, Policy
 from denied import authorize as policy_authorize
 from denied.errors import UnauthorizedError
 from denied.ext.errors import AbilityNotFound
-from denied.ext.falcon import authorize
+from denied.ext.sanic import authorize
 from tests.utils.permissions import ProjectPermissions
 
 
-class Resource:
+@pytest.fixture
+def endpoint() -> Callable[..., Awaitable[HTTPResponse]]:
     @authorize(ProjectPermissions.edit)
-    async def on_get(self, _: Request, resp: Response, id: int) -> None:
-        resp.text = json.dumps({"id": id})
+    async def get(request: Request, id: int) -> HTTPResponse:
+        del request
+        return json({"id": id})
+
+    return get
 
 
 class AbilityMiddleware:
     def __init__(self, ability: Ability) -> None:
         self._ability = ability
 
-    async def process_request(self, req: Request, _: Response) -> None:
-        req.context["ability"] = self._ability
+    async def __call__(self, request: Request) -> None:
+        request.ctx.ability = self._ability
 
 
-class ErrorHandler:
+class ErrorHandler(SanicErrorHandler):
     error: Optional[Exception] = None
 
-    async def __call__(
-        self, req: Request, resp: Response, error: Exception, params: Dict[str, Any]
-    ) -> None:
-        del req, resp, params
-        self.error = error
+    def default(self, request: Request, exception: Exception):
+        self.error = exception
+        return super().default(request, exception)
 
 
 class UserPolicy(Policy):
@@ -52,16 +55,11 @@ def error_handler() -> ErrorHandler:
 
 
 @pytest.fixture
-def app(error_handler: ErrorHandler) -> App:
-    falcon_app = App()
-    falcon_app.add_error_handler(Exception, error_handler)
-    falcon_app.add_route("/{id:int}", Resource())
-    return falcon_app
-
-
-@pytest.fixture
-def client(app: App) -> testing.TestClient:
-    return testing.TestClient(app)
+def app(error_handler: ErrorHandler, endpoint) -> Sanic:
+    sanic_app = Sanic("test")
+    sanic_app.error_handler = error_handler
+    sanic_app.add_route(endpoint, "/<id:int>", methods=["GET"])
+    return sanic_app
 
 
 @pytest.fixture
@@ -71,41 +69,38 @@ def policy() -> UserPolicy:
 
 class TestAuthorize:
     def test_raise_error_if_ability_is_not_found(
-        self, client: testing.TestClient, error_handler
+        self, app: Sanic, error_handler: ErrorHandler
     ) -> None:
-        client.simulate_get("/1")
+        app.test_client.get("/1")
         assert isinstance(error_handler.error, AbilityNotFound)
 
-    def test_execute_resource_if_authorized(
-        self, client: testing.TestClient, app: App
-    ) -> None:
+    def test_execute_resource_if_authorized(self, app: Sanic) -> None:
         ability_middleware = AbilityMiddleware(
             ability=Ability(default_action=Action.ALLOW)
         )
-        app.add_middleware(ability_middleware)
-        response = client.simulate_get("/1")
+        app.middleware("request")(ability_middleware)
+        _, response = app.test_client.get("/1")
         assert response.json == {"id": 1}
 
     def test_calls_policy_with_righ_arguments(
         self,
-        client: testing.TestClient,
-        app: App,
+        app: Sanic,
         policy: UserPolicy,
         mocker: MockerFixture,
     ) -> None:
         can_edit_project = mocker.spy(policy, "can_edit_project")
         ability_middleware = AbilityMiddleware(ability=Ability(policy=policy))
-        app.add_middleware(ability_middleware)
-        response = client.simulate_get("/1")
+        app.middleware("request")(ability_middleware)
+        _, response = app.test_client.get("/1")
         assert response.json == {"id": 1}
         can_edit_project.assert_called_once_with(request=ANY, id=1)
 
     def test_raise_error_if_not_authorized(
-        self, client: testing.TestClient, app: App, error_handler: ErrorHandler
+        self, app: Sanic, error_handler: ErrorHandler
     ) -> None:
         ability_middleware = AbilityMiddleware(
             ability=Ability(default_action=Action.DENY)
         )
-        app.add_middleware(ability_middleware)
-        client.simulate_get("/1")
+        app.middleware("request")(ability_middleware)
+        app.test_client.get("/1")
         assert isinstance(error_handler.error, UnauthorizedError)

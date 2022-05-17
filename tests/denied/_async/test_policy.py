@@ -1,11 +1,7 @@
 import pytest
 
-from denied.policy import (
-    PermissionAlreadyDefined,
-    Policy,
-    UndefinedPermission,
-    authorize,
-)
+from denied import Policy, authorize
+from denied.errors import PermissionAlreadyDefined, UndefinedPermission
 from tests.utils.models import Project, User
 from tests.utils.permissions import ProjectPermissions
 
@@ -16,7 +12,7 @@ class UserPolicy(Policy):
         self._user = user
 
     @authorize(ProjectPermissions.edit)
-    def can_edit_project(self, project: Project) -> bool:
+    async def can_edit_project(self, project: Project) -> bool:
         return project.owner_id == self._user.id
 
 
@@ -47,9 +43,9 @@ class TestMetaclass:
 
             class _(Policy):
                 @authorize(ProjectPermissions.edit)
-                def can_edit_project(self) -> bool:
+                async def can_edit_project(self) -> bool:
                     return False
 
                 @authorize(ProjectPermissions.edit)
-                def can_view_project(self) -> bool:
+                async def can_view_project(self) -> bool:
                     return False
