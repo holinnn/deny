@@ -3,21 +3,21 @@ from typing import Any, Dict, Optional
 from unittest.mock import ANY
 
 import pytest
-from falcon import App, Request, Response, testing
+from falcon import Request, Response, testing
+from falcon.asgi import App
 from pytest_mock import MockerFixture
 
-from denied.ability import Ability, Action
+from denied import Ability, Action, Policy
+from denied import authorize as policy_authorize
 from denied.errors import UnauthorizedError
 from denied.ext.errors import AbilityNotFound
 from denied.ext.falcon import authorize
-from denied.policy import Policy
-from denied.policy import authorize as policy_authorize
 from tests.utils.permissions import ProjectPermissions
 
 
 class Resource:
     @authorize(ProjectPermissions.edit)
-    def on_get(self, _: Request, resp: Response, id: int) -> None:
+    async def on_get(self, _: Request, resp: Response, id: int) -> None:
         resp.text = json.dumps({"id": id})
 
 
@@ -25,14 +25,14 @@ class AbilityMiddleware:
     def __init__(self, ability: Ability) -> None:
         self._ability = ability
 
-    def process_request(self, req: Request, _: Response) -> None:
+    async def process_request(self, req: Request, _: Response) -> None:
         req.context["ability"] = self._ability
 
 
 class ErrorHandler:
     error: Optional[Exception] = None
 
-    def __call__(
+    async def __call__(
         self, req: Request, resp: Response, error: Exception, params: Dict[str, Any]
     ) -> None:
         del req, resp, params
@@ -41,7 +41,7 @@ class ErrorHandler:
 
 class UserPolicy(Policy):
     @policy_authorize(ProjectPermissions.edit)
-    def can_edit_project(self, id: int, *args: Any, **kwargs: Any) -> bool:
+    async def can_edit_project(self, id: int, *args: Any, **kwargs: Any) -> bool:
         del id, args, kwargs
         return True
 
