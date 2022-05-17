@@ -14,7 +14,9 @@ class Ability:
         self._policy = policy or Policy()
         self._default_action = default_action
 
-    async def authorize(self, permission: Permission, *args, **kwargs) -> None:
+    async def authorize(
+        self, permission: Permission, *args: Any, **kwargs: Any
+    ) -> None:
         """Raises an UnauthorizedError if policy does not grant permission.
 
         Args:

@@ -22,6 +22,7 @@ pre-commit = "^2.19.0"
 pytest-mock = "^3.7.0"
 pytest-asyncio = "^0.18.3"
 unasync = "^0.5.0"
+sanic-testing = "^22.3.0"
 
 [tool.poetry.extras]
 falcon = ["falcon"]
@@ -40,6 +41,7 @@ profile = "black"
 [[tool.mypy.overrides]]
 module = [
     "falcon.*",
+    "sanic.*",
     "unasync"
 ]
 ignore_missing_imports = true

@@ -8,7 +8,7 @@ from denied import Ability
 from denied.ext.errors import AbilityNotFound
 from denied.permission import Permission
 
-ResourceMethod = Callable[[Any, Request, Any, Any], Awaitable[None]]
+ResourceMethod = Callable[..., Awaitable[None]]
 
 
 def authorize(

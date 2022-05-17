@@ -5,7 +5,7 @@ on: pull_request
 jobs:
   test:
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         python-version: [ "3.7", "3.8", "3.9", "3.10" ]
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
           key: venv-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-1
       - name: Install dependencies
         if: steps.load-cache.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root --extras "falcon"
+        run: poetry install --no-interaction --no-root --extras "falcon sanic"
       - name: black
         run: poetry run black --check .
       - name: isort
