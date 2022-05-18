@@ -11,6 +11,12 @@ class Ability:
     def __init__(
         self, policy: Optional[Policy] = None, default_action: Action = Action.DENY
     ):
+        """
+        Args:
+            policy (Optional[Policy]): policy that will be checked for permissions
+            default_action (Action): action used when the permission
+                was not set on policy
+        """
         self._policy = policy or Policy()
         self._default_action = default_action
 

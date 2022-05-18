@@ -31,10 +31,10 @@ class TestGetAccessMethod:
         with pytest.raises(UndefinedPermission):
             policy.get_access_method(ProjectPermissions.view)
 
-    def test_return_access_method_if_defined(self, policy: UserPolicy) -> None:
+    async def test_return_access_method_if_defined(self, policy: UserPolicy) -> None:
         access_method = policy.get_access_method(ProjectPermissions.edit)
         assert access_method is not None
-        assert access_method(Project(1))
+        assert await access_method(Project(1)) is True
 
 
 class TestMetaclass:

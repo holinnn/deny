@@ -7,12 +7,12 @@ from sanic.response import HTTPResponse
 from denied import Ability, Permission
 from denied.ext.errors import AbilityNotFound
 
-EndpointMethod = Callable[..., Awaitable[HTTPResponse]]
+EndpointFunction = Callable[..., Awaitable[HTTPResponse]]
 
 
 def authorize(
     permission: Permission, ability_key: str = "ability"
-) -> Callable[[EndpointMethod], EndpointMethod]:
+) -> Callable[[EndpointFunction], EndpointFunction]:
     """Sanic's decorator for checking endpoints' permissions.
     The policy's access methods will be called with the request and
     all the other arguments and keyword arguments sent to the endpoint.
@@ -22,7 +22,7 @@ def authorize(
         ability_key (str): key storing the ability object in the request.ctx
     """
 
-    def decorator(func: EndpointMethod) -> EndpointMethod:
+    def decorator(func: EndpointFunction) -> EndpointFunction:
         @wraps(func)
         async def wrapper(request: Request, *args: Any, **kwargs: Any) -> HTTPResponse:
             ability: Optional[Ability] = getattr(request.ctx, ability_key, None)
