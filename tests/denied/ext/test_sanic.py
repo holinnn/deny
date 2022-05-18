@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Awaitable, Callable, Optional
 from unittest.mock import ANY
 
@@ -57,6 +58,9 @@ def error_handler() -> ErrorHandler:
 @pytest.fixture
 def app(error_handler: ErrorHandler, endpoint) -> Sanic:
     sanic_app = Sanic("test")
+    for logger_name in ("sanic.root", "sanic.error", "sanic.access"):
+        logger = logging.getLogger(logger_name)
+        logger.disabled = True
     sanic_app.error_handler = error_handler
     sanic_app.add_route(endpoint, "/<id:int>", methods=["GET"])
     return sanic_app

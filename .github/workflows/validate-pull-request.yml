@@ -29,7 +29,7 @@ jobs:
           key: venv-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-1
       - name: Install dependencies
         if: steps.load-cache.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root --extras "falcon sanic"
+        run: poetry install --no-interaction --no-root --extras "falcon sanic fastapi"
       - name: black
         run: poetry run black --check .
       - name: isort
