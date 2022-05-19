@@ -3,9 +3,9 @@ from typing import Any, Dict
 import falcon
 from falcon import Request, Response, asgi
 
-from denied import Ability
-from denied.errors import UnauthorizedError
-from denied.ext.falcon import authorize
+from deny import Ability
+from deny.errors import UnauthorizedError
+from deny.ext.falcon import authorize
 
 from .common import ProjectPermissions, UserPolicy
 

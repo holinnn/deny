@@ -1,7 +1,7 @@
 from typing import Optional
 
-from denied.errors import UnauthorizedError
-from denied.sync import Ability, AutoPermission, Permission, Policy, authorize
+from deny.errors import UnauthorizedError
+from deny.sync import Ability, AutoPermission, Permission, Policy, authorize
 
 
 class ProfilePermissions:

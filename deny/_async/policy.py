@@ -1,9 +1,9 @@
 import inspect
 from typing import Any, Callable, Dict, List, Tuple
 
-from denied.errors import PermissionAlreadyDefined, UndefinedPermission
-from denied.permission import Permission
-from denied.utils import SyncAccessMethod
+from deny.errors import PermissionAlreadyDefined, UndefinedPermission
+from deny.permission import Permission
+from deny.utils import AccessMethod
 
 _AUTHORIZED_PERMISSIONS_ATTR = "_authorized_permissions"
 
@@ -51,8 +51,8 @@ class PolicyMetaclass(type):
         return super().__new__(cls, name, bases, attrs)
 
 
-def authorize(permission: Permission) -> Callable[[SyncAccessMethod], SyncAccessMethod]:
-    def decorator(func: SyncAccessMethod) -> SyncAccessMethod:
+def authorize(permission: Permission) -> Callable[[AccessMethod], AccessMethod]:
+    def decorator(func: AccessMethod) -> AccessMethod:
         """Add an `_authorized_permission` attribute to the method
         in order for the metaclass to recognize it as an AccessMethod.
 
@@ -77,7 +77,7 @@ def authorize(permission: Permission) -> Callable[[SyncAccessMethod], SyncAccess
 class Policy(metaclass=PolicyMetaclass):
     _access_methods: Dict[Permission, str]
 
-    def get_access_method(self, permission: Permission) -> SyncAccessMethod:
+    def get_access_method(self, permission: Permission) -> AccessMethod:
         """Returns the AccessMethod that was registered for the permission
         received as input.
         If no AccessMethod is found it raises a UndefinedPermission error.

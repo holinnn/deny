@@ -2,9 +2,9 @@ from sanic import Sanic
 from sanic.request import Request
 from sanic.response import HTTPResponse, json
 
-from denied import Ability
-from denied.errors import UnauthorizedError
-from denied.ext.sanic import authorize
+from deny import Ability
+from deny.errors import UnauthorizedError
+from deny.ext.sanic import authorize
 
 from .common import ProjectPermissions, UserPolicy
 

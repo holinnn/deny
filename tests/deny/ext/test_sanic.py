@@ -10,11 +10,11 @@ from sanic.models.handler_types import RouteHandler
 from sanic.request import Request
 from sanic.response import HTTPResponse, json
 
-from denied import Ability, Action, Policy
-from denied import authorize as policy_authorize
-from denied.errors import UnauthorizedError
-from denied.ext.errors import AbilityNotFound
-from denied.ext.sanic import authorize
+from deny import Ability, Action, Policy
+from deny import authorize as policy_authorize
+from deny.errors import UnauthorizedError
+from deny.ext.errors import AbilityNotFound
+from deny.ext.sanic import authorize
 from tests.utils.permissions import ProjectPermissions
 
 

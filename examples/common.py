@@ -1,6 +1,6 @@
 from typing import Any
 
-from denied import AutoPermission, Permission, Policy, authorize
+from deny import AutoPermission, Permission, Policy, authorize
 
 
 class ProjectPermissions:

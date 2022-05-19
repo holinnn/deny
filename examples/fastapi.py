@@ -4,9 +4,9 @@ from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import JSONResponse
 
-from denied import Ability
-from denied.errors import UnauthorizedError
-from denied.ext.fastapi import authorize_factory
+from deny import Ability
+from deny.errors import UnauthorizedError
+from deny.ext.fastapi import authorize_factory
 
 from .common import ProjectPermissions, UserPolicy
 

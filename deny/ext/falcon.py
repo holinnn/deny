@@ -4,9 +4,9 @@ from typing import Any, Awaitable, Callable, Optional
 from falcon import Request
 from falcon.response import Response
 
-from denied import Ability
-from denied.ext.errors import AbilityNotFound
-from denied.permission import Permission
+from deny import Ability
+from deny.ext.errors import AbilityNotFound
+from deny.permission import Permission
 
 ResourceMethod = Callable[..., Awaitable[None]]
 
