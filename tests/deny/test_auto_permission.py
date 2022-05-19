@@ -1,4 +1,4 @@
-from denied import AutoPermission, Permission
+from deny import AutoPermission, Permission
 
 
 class ProjectPermissions:

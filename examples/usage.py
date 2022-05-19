@@ -1,8 +1,8 @@
 import asyncio
 from typing import Optional
 
-from denied import Ability, AutoPermission, Permission, Policy, authorize
-from denied.errors import UnauthorizedError
+from deny import Ability, AutoPermission, Permission, Policy, authorize
+from deny.errors import UnauthorizedError
 
 
 class ProfilePermissions:

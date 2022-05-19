@@ -5,9 +5,9 @@ from typing import List
 import unasync
 
 _ROOT_DIR = Path(__file__).absolute().parent.parent
-_ASYNC_TESTS_DIR = _ROOT_DIR / "tests/denied/_async"
-_SYNC_TESTS_DIR = _ROOT_DIR / "tests/denied/_sync"
-_ASYNC_LIB_DIR = _ROOT_DIR / "denied/_async"
+_ASYNC_TESTS_DIR = _ROOT_DIR / "tests/deny/_async"
+_SYNC_TESTS_DIR = _ROOT_DIR / "tests/deny/_sync"
+_ASYNC_LIB_DIR = _ROOT_DIR / "deny/_async"
 
 
 def _get_python_files_from_directory(directory: Path) -> List[str]:
@@ -23,13 +23,13 @@ def main():
     additional_replacements = {"AccessMethod": "SyncAccessMethod"}
     rules = [
         unasync.Rule(
-            fromdir="denied/_async/",
-            todir="denied/_sync/",
+            fromdir="deny/_async/",
+            todir="deny/_sync/",
             additional_replacements=additional_replacements,
         ),
         unasync.Rule(
-            fromdir="tests/denied/_async/",
-            todir="tests/denied/_sync/",
+            fromdir="tests/deny/_async/",
+            todir="tests/deny/_sync/",
             additional_replacements=additional_replacements,
         ),
     ]
@@ -41,7 +41,7 @@ def main():
     for filepath in _get_python_files_from_directory(_SYNC_TESTS_DIR):
         file = Path(filepath)
         content = file.read_text()
-        new_content = content.replace("from denied import", "from denied.sync import")
+        new_content = content.replace("from deny import", "from deny.sync import")
         if content != new_content:
             file.write_text(new_content)
 

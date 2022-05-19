@@ -1,4 +1,4 @@
-from denied.permission import AutoPermission
+from deny.permission import AutoPermission
 
 
 class ProjectPermissions:

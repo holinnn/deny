@@ -7,10 +7,10 @@ from fastapi import FastAPI, Request, Response
 from fastapi.testclient import TestClient
 from pytest_mock import MockerFixture
 
-from denied import Ability, Policy
-from denied import authorize as policy_authorize
-from denied.errors import UnauthorizedError
-from denied.ext.fastapi import authorize_factory
+from deny import Ability, Policy
+from deny import authorize as policy_authorize
+from deny.errors import UnauthorizedError
+from deny.ext.fastapi import authorize_factory
 from tests.utils.permissions import ProjectPermissions
 
 

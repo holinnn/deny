@@ -7,11 +7,11 @@ from falcon import Request, Response, testing
 from falcon.asgi import App
 from pytest_mock import MockerFixture
 
-from denied import Ability, Action, Policy
-from denied import authorize as policy_authorize
-from denied.errors import UnauthorizedError
-from denied.ext.errors import AbilityNotFound
-from denied.ext.falcon import authorize
+from deny import Ability, Action, Policy
+from deny import authorize as policy_authorize
+from deny.errors import UnauthorizedError
+from deny.ext.errors import AbilityNotFound
+from deny.ext.falcon import authorize
 from tests.utils.permissions import ProjectPermissions
 
 

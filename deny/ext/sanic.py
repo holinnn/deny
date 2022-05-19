@@ -5,8 +5,8 @@ from sanic.models.handler_types import RouteHandler
 from sanic.request import Request
 from sanic.response import HTTPResponse
 
-from denied import Ability, Permission
-from denied.ext.errors import AbilityNotFound
+from deny import Ability, Permission
+from deny.ext.errors import AbilityNotFound
 
 
 def authorize(

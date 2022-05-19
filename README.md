@@ -1,4 +1,4 @@
-# denied
+# deny
 
 Library for managing permissions in your Python 3.7+ projects.  
 For example, it can be used to grant access to some API endpoints based on policies you defined.
@@ -6,7 +6,7 @@ For example, it can be used to grant access to some API endpoints based on polic
 ## Installation
 
 ```
-pip install denied
+pip install deny
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ pip install denied
 First define the permissions needed in your project:
 
 ```python 
-from denied import AutoPermission, Permission
+from deny import AutoPermission, Permission
 
 class ProfilePermissions:
     view = Permission(name="view_project")
@@ -28,7 +28,7 @@ class SessionPermissions:
 Then create policies that will be used to grant the permissions:
 
 ```python
-from denied import Policy, authorize
+from deny import Policy, authorize
 
 class LoggedInUser:
     @authorize(SessionPermissions.delete)
@@ -64,7 +64,7 @@ class UserPolicy(LoggedInUser, Policy):
 Finally create an Ability with the right policy and check if the permissions are granted:
 
 ```python
-from denied import Ability
+from deny import Ability
 
 def get_ability(current_user_id: Optional[int]) -> Ability:
     if current_user_id:
@@ -99,12 +99,12 @@ await ability.can(SessionPermission.create) # True
 await ability.can(ProfilePermissions.delete) # False
 ```
 
-You can see the full example in [examples/usage.py](https://github.com/holinnn/denied/tree/main/examples/usage.py) (you will need `asyncio` to run it, `pip install asyncio`)
+You can see the full example in [examples/usage.py](https://github.com/holinnn/deny/tree/main/examples/usage.py) (you will need `asyncio` to run it, `pip install asyncio`)
 
 
 ## Web frameworks
 
-Denied can be used with any web framework.  
+Deny can be used with any web framework.  
 But it comes with some helper functions for [Falcon](https://falcon.readthedocs.io/en/stable/), [Sanic](https://sanic.dev/en/) and [FastAPI](https://fastapi.tiangolo.com/).
 
 Here is an example for the [Sanic](https://sanic.dev/en/) web framework:
@@ -114,9 +114,9 @@ from sanic.request import Request
 from sanic.response import HTTPResponse, json
 from typing import Any
 
-from denied import Ability, AutoPermission, Policy, authorize as policy_authorize
-from denied.errors import UnauthorizedError
-from denied.ext.sanic import authorize
+from deny import Ability, AutoPermission, Policy, authorize as policy_authorize
+from deny.errors import UnauthorizedError
+from deny.ext.sanic import authorize
 
 
 
@@ -149,12 +149,12 @@ async def unauthorized_handler(request: Request, exc: Exception):
     return json({"error": str(exc)}, status=403)
 ```
 
-You can find the examples for each of those frameworks in the [examples/](https://github.com/holinnn/denied/tree/main/examples) folder from this repository.
+You can find the examples for each of those frameworks in the [examples/](https://github.com/holinnn/deny/tree/main/examples) folder from this repository.
 
 
 ## Sync support
 
-By default all the classes provided by `denied` are built to run in an asynchronous environement.  
-If you run in a synchronous environement (without `async`, `await`), then import from `denied.sync` instead of `denied`.  
-See [examples/sync.py](https://github.com/holinnn/denied/tree/main/examples/sync.py) for a full example.
+By default all the classes provided by `deny` are built to run in an asynchronous environement.  
+If you run in a synchronous environement (without `async`, `await`), then import from `deny.sync` instead of `deny`.  
+See [examples/sync.py](https://github.com/holinnn/deny/tree/main/examples/sync.py) for a full example.
 

@@ -1,7 +1,7 @@
 import pytest
 
-from denied import Ability, Action, Policy, authorize
-from denied.errors import UnauthorizedError, UndefinedPermission
+from deny import Ability, Action, Policy, authorize
+from deny.errors import UnauthorizedError, UndefinedPermission
 from tests.utils.models import Project, User
 from tests.utils.permissions import ProjectPermissions
 

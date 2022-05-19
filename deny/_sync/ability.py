@@ -1,8 +1,8 @@
 from typing import Any, Optional
 
-from denied.action import Action
-from denied.errors import UnauthorizedError, UndefinedPermission
-from denied.permission import Permission
+from deny.action import Action
+from deny.errors import UnauthorizedError, UndefinedPermission
+from deny.permission import Permission
 
 from .policy import Policy
 

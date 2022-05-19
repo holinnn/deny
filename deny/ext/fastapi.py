@@ -4,7 +4,7 @@ from typing import Any, Awaitable, Callable
 
 from fastapi import Depends, Request
 
-from denied import Ability, Permission
+from deny import Ability, Permission
 
 EndpointFunction = Callable[..., Awaitable[Any]]
 
