@@ -1,11 +1,12 @@
 import logging
-from typing import Any, Awaitable, Callable, Optional
+from typing import Any, Optional
 from unittest.mock import ANY
 
 import pytest
 from pytest_mock import MockerFixture
 from sanic import Sanic
 from sanic.handlers import ErrorHandler as SanicErrorHandler
+from sanic.models.handler_types import RouteHandler
 from sanic.request import Request
 from sanic.response import HTTPResponse, json
 
@@ -18,7 +19,7 @@ from tests.utils.permissions import ProjectPermissions
 
 
 @pytest.fixture
-def endpoint() -> Callable[..., Awaitable[HTTPResponse]]:
+def endpoint() -> RouteHandler:
     @authorize(ProjectPermissions.edit)
     async def get(request: Request, id: int) -> HTTPResponse:
         del request

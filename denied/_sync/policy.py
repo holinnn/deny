@@ -1,8 +1,11 @@
-from typing import Any, Callable, Dict, Optional, Tuple
+import inspect
+from typing import Any, Callable, Dict, List, Tuple
 
 from denied.errors import PermissionAlreadyDefined, UndefinedPermission
 from denied.permission import Permission
 from denied.utils import SyncAccessMethod
+
+_AUTHORIZED_PERMISSIONS_ATTR = "_authorized_permissions"
 
 
 class PolicyMetaclass(type):
@@ -24,17 +27,25 @@ class PolicyMetaclass(type):
             bases (Tuple[type, ...]): base classes
             attrs (Dict[str, Any]): class attributes
         """
-        access_methods: Dict[Permission, str] = {}
-        for name, value in attrs.items():
-            permission: Optional[Permission] = getattr(
-                value, "_authorized_permission", None
-            )
-            if not permission:
-                continue
+        # add the methods from base classes to the ones that will be checked
+        attributes_to_check = attrs.copy()
+        for base in bases:
+            base_methods = inspect.getmembers(base, predicate=inspect.isfunction)
+            for base_method in base_methods:
+                attributes_to_check[base_method[0]] = base_method[1]
 
-            if permission in access_methods:
-                raise PermissionAlreadyDefined(permission)
-            access_methods[permission] = name
+        # check if @autorize() was used for each method and register
+        # the ones that grant a permission
+        access_methods: Dict[Permission, str] = {}
+        for name, value in attributes_to_check.items():
+            permissions: List[Permission] = getattr(
+                value, _AUTHORIZED_PERMISSIONS_ATTR, []
+            )
+
+            for permission in permissions:
+                if permission in access_methods:
+                    raise PermissionAlreadyDefined(permission)
+                access_methods[permission] = name
 
         attrs["_access_methods"] = access_methods
         return super().__new__(cls, name, bases, attrs)
@@ -51,7 +62,13 @@ def authorize(permission: Permission) -> Callable[[SyncAccessMethod], SyncAccess
         Returns:
             AccessMethod: access method received as input
         """
-        setattr(func, "_authorized_permission", permission)
+        if hasattr(func, _AUTHORIZED_PERMISSIONS_ATTR):
+            permissions = getattr(func, _AUTHORIZED_PERMISSIONS_ATTR)
+        else:
+            permissions = []
+            setattr(func, _AUTHORIZED_PERMISSIONS_ATTR, permissions)
+
+        permissions.append(permission)
         return func
 
     return decorator
