@@ -3,15 +3,22 @@ import pytest
 from denied.errors import PermissionAlreadyDefined, UndefinedPermission
 from denied.sync import Policy, authorize
 from tests.utils.models import Project, User
-from tests.utils.permissions import ProjectPermissions
+from tests.utils.permissions import ProjectPermissions, SessionPermissions
 
 
-class UserPolicy(Policy):
+class LoggedInPolicy:
+    @authorize(SessionPermissions.delete)
+    def can_log_out(self) -> bool:
+        return True
+
+
+class UserPolicy(LoggedInPolicy, Policy):
     def __init__(self, user: User) -> None:
         super().__init__()
         self._user = user
 
     @authorize(ProjectPermissions.edit)
+    @authorize(ProjectPermissions.delete)
     def can_edit_project(self, project: Project) -> bool:
         return project.owner_id == self._user.id
 
@@ -35,6 +42,20 @@ class TestGetAccessMethod:
         access_method = policy.get_access_method(ProjectPermissions.edit)
         assert access_method is not None
         assert access_method(Project(1)) is True
+
+    def test_return_access_method_if_multiple_permissions_defined(
+        self, policy: UserPolicy
+    ) -> None:
+        access_method = policy.get_access_method(ProjectPermissions.edit)
+        assert access_method is not None
+        assert access_method(Project(1)) is True
+
+    def test_return_access_method_defined_in_base_class(
+        self, policy: UserPolicy
+    ) -> None:
+        access_method = policy.get_access_method(SessionPermissions.delete)
+        assert access_method is not None
+        assert access_method() is True
 
 
 class TestMetaclass:

@@ -1,18 +1,17 @@
 from functools import wraps
-from typing import Any, Awaitable, Callable, Optional
+from typing import Any, Callable, Optional
 
+from sanic.models.handler_types import RouteHandler
 from sanic.request import Request
 from sanic.response import HTTPResponse
 
 from denied import Ability, Permission
 from denied.ext.errors import AbilityNotFound
 
-EndpointFunction = Callable[..., Awaitable[HTTPResponse]]
-
 
 def authorize(
     permission: Permission, ability_key: str = "ability"
-) -> Callable[[EndpointFunction], EndpointFunction]:
+) -> Callable[[RouteHandler], RouteHandler]:
     """Sanic's decorator for checking endpoints' permissions.
     The policy's access methods will be called with the request and
     all the other arguments and keyword arguments sent to the endpoint.
@@ -22,9 +21,11 @@ def authorize(
         ability_key (str): key storing the ability object in the request.ctx
     """
 
-    def decorator(func: EndpointFunction) -> EndpointFunction:
+    def decorator(func: RouteHandler) -> RouteHandler:
         @wraps(func)
-        async def wrapper(request: Request, *args: Any, **kwargs: Any) -> HTTPResponse:
+        async def wrapper(
+            request: Request, *args: Any, **kwargs: Any
+        ) -> Optional[HTTPResponse]:
             ability: Optional[Ability] = getattr(request.ctx, ability_key, None)
             if ability:
                 await ability.authorize(permission, request=request, *args, **kwargs)

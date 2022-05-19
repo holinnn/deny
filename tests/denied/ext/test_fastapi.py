@@ -48,7 +48,7 @@ def app(error_recorder: SimpleNamespace, ability: Ability, endpoint) -> FastAPI:
     async def _(request: Request, exc: Exception):
         del request
         error_recorder.error = exc
-        return Response(status_code=500)
+        return Response(status_code=403)
 
     authorized_endpoint = authorize(ProjectPermissions.edit)(endpoint)
     fastapi_app.get("/{id}")(authorized_endpoint)
@@ -84,5 +84,6 @@ class TestAuthorize:
     def test_raise_error_if_not_authorized(
         self, client: TestClient, error_recorder: SimpleNamespace
     ) -> None:
-        client.get("/2")
+        response = client.get("/2")
+        assert response.status_code == 403
         assert isinstance(error_recorder.error, UnauthorizedError)
