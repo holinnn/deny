@@ -105,14 +105,13 @@ You can see the full example in [examples/usage.py](https://github.com/holinnn/d
 ## Web frameworks
 
 Deny can be used with any web framework.  
-But it comes with some helper functions for [Falcon](https://falcon.readthedocs.io/en/stable/), [Sanic](https://sanic.dev/en/) and [FastAPI](https://fastapi.tiangolo.com/).
+But it comes with some helper functions for [Falcon](https://falcon.readthedocs.io/en/stable/), [Sanic](https://sanic.dev/en/), [FastAPI](https://fastapi.tiangolo.com/) and [Flask](https://flask.palletsprojects.com/).
 
 Here is an example for the [Sanic](https://sanic.dev/en/) web framework:
 ```python 
 from sanic import Sanic
 from sanic.request import Request
 from sanic.response import HTTPResponse, json
-from typing import Any
 
 from deny import Ability, AutoPermission, Policy, authorize as policy_authorize
 from deny.errors import UnauthorizedError

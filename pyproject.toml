@@ -10,9 +10,6 @@ repository = "https://github.com/holinnn/deny"
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
-falcon = { version = ">=3.0.0", optional = true }
-sanic = { version = ">=22.0.0", optional = true }
-fastapi = { version = ">=0.78.0", optional = true }
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -29,11 +26,10 @@ pytest-asyncio = "^0.18.3"
 unasync = "^0.5.0"
 sanic-testing = "^22.3.0"
 requests = "^2.27.1"
-
-[tool.poetry.extras]
-falcon = ["falcon"]
-sanic = ["sanic"]
-fastapi = ["fastapi"]
+fastapi = "^0.78.0"
+sanic = "^22.3.2"
+falcon = "^3.1.0"
+Flask = "^2.1.2"
 
 [tool.pytest.ini_options]
 addopts = "-s --cov=deny --no-cov-on-fail --cov-report=term:skip-covered --cov-report=html"
