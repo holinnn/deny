@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "deny"
-version = "0.1.1-alpha.1"
+version = "0.1.1-alpha.2"
 description = "Library for managing permissions in your Python 3.7+ projects"
 authors = ["Aurélien <aurelien.amilin@gmail.com>"]
 readme = "README.md"
