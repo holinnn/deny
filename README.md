@@ -38,7 +38,7 @@ class LoggedInUser:
 
 class AnonymousUser(Policy):
     @authorize(SessionPermissions.create)
-    async def can_logout(self):
+    async def can_login(self):
         return True
 
 
